@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagicVilla_VillaAPI.Controllers
+namespace MagicVilla_VillaAPI.Controllers.v1
 {
-    [Route("api/VillaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0", Deprecated = true)]
     public class VillaNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -34,7 +35,7 @@ namespace MagicVilla_VillaAPI.Controllers
         {
             try
             {
-                IEnumerable<VillaNumber> villaNumberList = await _dbVillaNumber.GetAllAsync(includeProperties:"Villa");
+                IEnumerable<VillaNumber> villaNumberList = await _dbVillaNumber.GetAllAsync(includeProperties: "Villa");
 
                 var responseResult = _mapper.Map<List<VillaNumberDTO>>(villaNumberList);
                 _response = CreateResponse(HttpStatusCode.OK, result: responseResult);
@@ -95,7 +96,7 @@ namespace MagicVilla_VillaAPI.Controllers
             {
                 if (await _dbVillaNumber.GetAsync(u => u.VillaNo == createDto.VillaNo) != null)
                 {
-                    _response = CreateResponse(HttpStatusCode.BadRequest, ["Villa Number ID is exists!"], isSuccess:false);
+                    _response = CreateResponse(HttpStatusCode.BadRequest, ["Villa Number ID is exists!"], isSuccess: false);
                     return BadRequest(_response);
                 }
 
@@ -202,8 +203,8 @@ namespace MagicVilla_VillaAPI.Controllers
             return Ok(_response);
         }
 
-        private APIResponse CreateResponse(HttpStatusCode statusCode, IEnumerable<string>? errorMessages = null,
-            object? result = null, bool isSuccess = true)
+        private APIResponse CreateResponse(HttpStatusCode statusCode, IEnumerable<string> errorMessages = null,
+            object result = null, bool isSuccess = true)
         {
             return new APIResponse
             {

@@ -44,11 +44,9 @@ public class AuthController : Controller
             HttpContext.Session.SetString(SD.SessionToken, model.Token);
             return RedirectToAction("Index", "Home");
         }
-        else
-        {
-            ModelState.AddModelError("CustomError", response.ErrorMessages.FirstOrDefault());
-            return View(obj);
-        }
+
+        ModelState.AddModelError("CustomError", response.ErrorMessages.FirstOrDefault());
+        return View(obj);
     }
 
     [HttpGet]
