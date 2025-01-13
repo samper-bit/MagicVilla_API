@@ -68,7 +68,7 @@ namespace MagicVilla_VillaAPI.Controllers.v1
                 if (villaNumber == null)
                 {
                     _response = CreateResponse(HttpStatusCode.NotFound, ["Villa Number not found!"], isSuccess: false);
-                    NotFound(_response);
+                    return NotFound(_response);
                 }
 
                 var responseResult = _mapper.Map<VillaNumberDTO>(villaNumber);
