@@ -5,33 +5,33 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using MagicVilla_Web.Models.DTO;
+using MagicVilla_Utility;
 
-namespace MagicVilla_Web.Controllers
+namespace MagicVilla_Web.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IVillaService _villaService;
+    private readonly IMapper _mapper;
+
+    public HomeController(IVillaService villaService, IMapper mapper)
     {
-        private readonly IVillaService _villaService;
-        private readonly IMapper _mapper;
+        _villaService = villaService;
+        _mapper = mapper;
+    }
 
-        public HomeController(IVillaService villaService, IMapper mapper)
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        List<VillaDTO> list = new();
+
+        var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
+
+        if (response != null && response.IsSuccess)
         {
-            _villaService = villaService;
-            _mapper = mapper;
+            list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            List<VillaDTO> list = new();
-
-            var response = await _villaService.GetAllAsync<APIResponse>();
-
-            if (response != null && response.IsSuccess)
-            {
-                list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
-            }
-
-            return View(list);
-        }
+        return View(list);
     }
 }
